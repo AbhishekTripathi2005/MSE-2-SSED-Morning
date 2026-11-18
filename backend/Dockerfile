@@ -14,6 +14,7 @@ ENV PORT=3000
 
 EXPOSE 3000
 
-USER node
+# hadolint ignore=DL3066
+USER 1000:1000
 
 CMD ["node", "src/server.js"]
