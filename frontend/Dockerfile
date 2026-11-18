@@ -1,4 +1,3 @@
-
 # Stage 1: Build React application
 FROM node:22-alpine AS build
 
@@ -16,9 +15,8 @@ COPY . .
 # Build production application
 RUN npm run build
 
-
 # Stage 2: Serve using Nginx
-FROM nginx:alpine
+FROM nginx:1.27-alpine
 
 # Copy Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf

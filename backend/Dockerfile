@@ -1,34 +1,19 @@
+FROM node:22-alpine
 
-CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+WORKDIR /app
 
-CREATE TABLE IF NOT EXISTS tasks (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL
-        REFERENCES users(id) ON DELETE CASCADE,
+# Install production dependencies
+COPY package.json ./
+RUN npm install --omit=dev --no-audit --no-fund
 
-    title TEXT NOT NULL,
+# Copy application source
+COPY src ./src
 
-    description TEXT DEFAULT '',
+ENV NODE_ENV=production
+ENV PORT=3000
 
-    status VARCHAR(30) DEFAULT 'Pending'
-        CHECK (
-            status IN (
-                'Pending',
-                'In Progress',
-                'Completed'
-            )
-        ),
+EXPOSE 3000
 
-    created_at TIMESTAMP DEFAULT NOW(),
+USER node
 
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS idx_tasks_user_id
-ON tasks(user_id);
+CMD ["node", "src/server.js"]
